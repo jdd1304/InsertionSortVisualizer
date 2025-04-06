@@ -18,7 +18,7 @@
     }
     
     h1 {
-      color: #90caf9;
+      color: #3949ab;
       margin-bottom: 20px;
       text-align: center;
       font-weight: 600;
@@ -37,7 +37,7 @@
     }
     
     button {
-      background-color: #2196f3;
+      background-color: #3949ab;
       color: white;
       border: none;
       padding: 10px 20px;
@@ -49,7 +49,7 @@
     }
     
     button:hover {
-      background-color: #1976d2;
+      background-color: #3949ab;
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     }
@@ -113,7 +113,7 @@
     }
     
     .number-box.current-i {
-      background-color: #5c6bc0;
+      background-color: #3949ab;
       box-shadow: 0 0 20px rgba(92, 107, 192, 0.6);
       z-index: 10;
     }
@@ -131,7 +131,7 @@
     }
     
     .number-box.sorted {
-      background-color: #ab47bc;
+      background-color: #3949ab;
       box-shadow: 0 0 20px rgba(171, 71, 188, 0.5);
     }
     
@@ -186,7 +186,7 @@
     }
     
     .i-color {
-      background-color: #5c6bc0;
+      background-color: #3949ab;
     }
     
     .j-color {
@@ -218,42 +218,143 @@
       z-index: 100;
       transition: all 1.2s cubic-bezier(0.25, 0.1, 0.25, 1.4);
     }
+    
     .about-section {
-  background-color: #1e1e1e;
-  color: #e0e0e0;
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  line-height: 1.6;
-}
+      background-color: #1e1e1e;
+      color: #e0e0e0;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      line-height: 1.6;
+    }
 
-.about-section h2 {
-  color: #90caf9;
-  margin-bottom: 15px;
-  text-align: center;
-}
+    .about-section h2 {
+      color: #3949ab;
+      margin-bottom: 15px;
+      text-align: center;
+    }
 
-.about-section h3 {
-  color: #f48fb1;
-  margin-top: 20px;
-}
+    .about-section h3 {
+      color: #3949ab;
+      margin-top: 20px;
+    }
 
-.about-section ul,
-.about-section ol {
-  padding-left: 20px;
-}
+    .about-section ul,
+    .about-section ol {
+      padding-left: 20px;
+    }
+    
+    /* Custom array input styles */
+    .custom-input-container {
+      background-color: #1e1e1e;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 800px;
+    }
+    
+    .custom-input-container h3 {
+      color: #3949ab;
+      margin-top: 0;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    
+    .input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .input-row label {
+      font-weight: 500;
+      min-width: 80px;
+    }
+    
+    .input-row input[type="text"] {
+      flex: 1;
+      padding: 10px 15px;
+      border-radius: 5px;
+      border: 1px solid #424242;
+      background-color: #2d2d2d;
+      color: #e0e0e0;
+      font-size: 16px;
+    }
+    
+    .input-error {
+      color: #f44336;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    
+    .tab-container {
+      display: flex;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #424242;
+    }
+    
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      background-color: #2d2d2d;
+      border-radius: 5px 5px 0 0;
+      margin-right: 5px;
+      opacity: 0.7;
+      transition: opacity 0.3s;
+    }
+    
+    .tab.active {
+      opacity: 1;
+      border-bottom: 3px solid #3949ab;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
   </style>
 </head>
 <body>
   <h1>Insertion Sort Visualization</h1>
   
+  <div class="custom-input-container">
+    <div class="tab-container">
+      <div class="tab active" data-tab="random">Random Array</div>
+      <div class="tab" data-tab="custom">Custom Array</div>
+    </div>
+    
+    <div class="tab-content active" id="random-tab">
+      <div class="input-row">
+        <label for="array-size">Size:</label>
+        <input type="text" id="array-size" value="10" placeholder="Enter array size (3-15)">
+        <button id="generate">Generate Random Array</button>
+      </div>
+      <div id="size-error" class="input-error"></div>
+    </div>
+    
+    <div class="tab-content" id="custom-tab">
+      <div class="input-row">
+        <label for="custom-array">Values:</label>
+        <input type="text" id="custom-array" placeholder="Enter numbers separated by commas (e.g., 45, 23, 11, 89, 77)">
+        <button id="use-custom">Create Array</button>
+      </div>
+      <div id="custom-error" class="input-error"></div>
+    </div>
+  </div>
+  
   <div class="controls">
-    <button id="generate">Generate New Array</button>
-    <button id="start">Start Sorting</button>
+    <button id="start" disabled>Start Sorting</button>
     <button id="pause" disabled>Pause</button>
-    <button id="reset">Reset</button>
+    <button id="reset" disabled>Reset</button>
     <div class="speed-control">
       <label for="speed">Speed:</label>
       <input type="range" id="speed" min="1" max="3" value="1">
@@ -284,12 +385,12 @@
   </div>
   
   <div class="status" id="status">
-    Generate a new array and click 'Start Sorting' to begin
+    Generate a new array or enter a custom array to begin
   </div>
   
   <script>
     let array = [];
-    let arraySize = 10;  // Reduced size for better visibility with boxes
+    let arraySize = 10;  // Default size
     let animationQueue = [];
     let animationInterval;
     let isPaused = false;
@@ -298,19 +399,91 @@
     const arrayContainer = document.getElementById('array-container');
     const statusElement = document.getElementById('status');
     const generateButton = document.getElementById('generate');
+    const useCustomButton = document.getElementById('use-custom');
     const startButton = document.getElementById('start');
     const pauseButton = document.getElementById('pause');
     const resetButton = document.getElementById('reset');
     const speedControl = document.getElementById('speed');
+    const arraySizeInput = document.getElementById('array-size');
+    const customArrayInput = document.getElementById('custom-array');
+    const sizeError = document.getElementById('size-error');
+    const customError = document.getElementById('custom-error');
+    
+    // Tab functionality
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Remove active class from all tabs and contents
+        tabs.forEach(t => t.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
+        
+        // Add active class to selected tab and its content
+        tab.classList.add('active');
+        document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+      });
+    });
     
     // Generate random array
     function generateArray() {
+      // Validate array size
+      const size = parseInt(arraySizeInput.value);
+      
+      if (isNaN(size) || size < 3 || size > 15) {
+        sizeError.textContent = 'Please enter a size between 3 and 15';
+        return;
+      }
+      
+      sizeError.textContent = '';
+      arraySize = size;
       array = [];
+      
       for (let i = 0; i < arraySize; i++) {
         array.push(Math.floor(Math.random() * 90) + 10); // Values between 10 and 99
       }
+      
       renderArray();
-      statusElement.textContent = `Array generated with ${arraySize} elements. Click 'Start Sorting' to begin.`;
+      statusElement.textContent = `Random array generated with ${arraySize} elements. Click 'Start Sorting' to begin.`;
+      startButton.disabled = false;
+      resetButton.disabled = false;
+    }
+    
+    // Create array from custom input
+    function createCustomArray() {
+      const input = customArrayInput.value.trim();
+      
+      if (!input) {
+        customError.textContent = 'Please enter values for the array';
+        return;
+      }
+      
+      // Parse input string to get array values
+      const values = input.split(',').map(item => {
+        return parseInt(item.trim());
+      });
+      
+      // Validate values
+      const invalidValues = values.filter(val => isNaN(val));
+      if (invalidValues.length > 0) {
+        customError.textContent = 'Please enter only numeric values';
+        return;
+      }
+      
+      // Check array size
+      if (values.length < 3 || values.length > 15) {
+        customError.textContent = 'Please enter between 3 and 15 numbers';
+        return;
+      }
+      
+      customError.textContent = '';
+      array = values;
+      arraySize = values.length;
+      
+      renderArray();
+      statusElement.textContent = `Custom array created with ${arraySize} elements. Click 'Start Sorting' to begin.`;
+      startButton.disabled = false;
+      resetButton.disabled = false;
     }
     
     // Render array as number boxes
@@ -567,13 +740,9 @@
     }
     
     // Event listeners
-    generateButton.addEventListener('click', () => {
-      if (isSorting) return;
-      
-      generateArray();
-      startButton.disabled = false;
-      resetButton.disabled = false;
-    });
+    generateButton.addEventListener('click', generateArray);
+    
+    useCustomButton.addEventListener('click', createCustomArray);
     
     startButton.addEventListener('click', () => {
       if (isSorting) return;
@@ -613,34 +782,44 @@
       statusElement.textContent = 'Sorting reset. Click "Start Sorting" to begin again.';
     });
     
+    // Input validation
+    arraySizeInput.addEventListener('input', () => {
+      const size = parseInt(arraySizeInput.value);
+      if (isNaN(size) || size < 3 || size > 15) {
+        sizeError.textContent = 'Please enter a size between 3 and 15';
+      } else {
+        sizeError.textContent = '';
+      }
+    });
+    
     // Initialize
     generateArray();
   </script>
-    <div class="about-section">
-        <h2>About Insertion Sort</h2>
-        <p>
-          Insertion Sort is a simple sorting algorithm that builds the final sorted array one item at a time. 
-          It is much like sorting playing cards in your hands—take one card at a time and insert it into its correct position.
-        </p>
-        <h3>Algorithm Steps:</h3>
-        <ol>
-          <li>Start from the second element (index 1).</li>
-          <li>Compare it with elements before it.</li>
-          <li>Shift larger elements one position to the right.</li>
-          <li>Insert the current element at the correct position.</li>
-          <li>Repeat for all elements until the array is sorted.</li>
-        </ol>
-        <h3>Time Complexity:</h3>
-        <ul>
-          <li><strong>Best Case:</strong> O(n) – when the array is already sorted</li>
-          <li><strong>Average Case:</strong> O(n²)</li>
-          <li><strong>Worst Case:</strong> O(n²) – when the array is reverse sorted</li>
-        </ul>
-        <h3>Space Complexity:</h3>
-        <p>O(1) – Insertion Sort is an in-place sorting algorithm, meaning it doesn’t require extra space.</p>
-        <h3>Stability:</h3>
-        <p>Insertion Sort is a <strong>stable</strong> sorting algorithm – it preserves the relative order of equal elements.</p>
-      </div>
-    
+  
+  <div class="about-section">
+    <h2>About Insertion Sort</h2>
+    <p>
+      Insertion Sort is a simple sorting algorithm that builds the final sorted array one item at a time. 
+      It is much like sorting playing cards in your hands—take one card at a time and insert it into its correct position.
+    </p>
+    <h3>Algorithm Steps:</h3>
+    <ol>
+      <li>Start from the second element (index 1).</li>
+      <li>Compare it with elements before it.</li>
+      <li>Shift larger elements one position to the right.</li>
+      <li>Insert the current element at the correct position.</li>
+      <li>Repeat for all elements until the array is sorted.</li>
+    </ol>
+    <h3>Time Complexity:</h3>
+    <ul>
+      <li><strong>Best Case:</strong> O(n) – when the array is already sorted</li>
+      <li><strong>Average Case:</strong> O(n²)</li>
+      <li><strong>Worst Case:</strong> O(n²) – when the array is reverse sorted</li>
+    </ul>
+    <h3>Space Complexity:</h3>
+    <p>O(1) – Insertion Sort is an in-place sorting algorithm, meaning it doesn't require extra space.</p>
+    <h3>Stability:</h3>
+    <p>Insertion Sort is a <strong>stable</strong> sorting algorithm – it preserves the relative order of equal elements.</p>
+  </div>
 </body>
 </html>
