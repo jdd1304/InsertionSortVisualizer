@@ -24,6 +24,31 @@
       font-weight: 600;
     }
     
+    .visualization-toggle {
+      display: flex;
+      margin-bottom: 20px;
+      background-color: #1e1e1e;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .toggle-btn {
+      background-color: #2d2d2d;
+      color: #e0e0e0;
+      border: none;
+      padding: 12px 25px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+    
+    .toggle-btn.active {
+      background-color: #3949ab;
+      color: white;
+    }
+    
     .controls {
       margin: 20px 0;
       display: flex;
@@ -49,7 +74,7 @@
     }
     
     button:hover {
-      background-color: #3949ab;
+      background-color: #5c6bc0;
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     }
@@ -84,15 +109,27 @@
       border-radius: 10px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
       padding: 20px 0;
+      min-height: 200px;
     }
     
     .array-container {
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       gap: 10px;
       padding: 40px 20px;
       position: relative;
+      width: 100%;
+    }
+    
+    .cards-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 40px 20px;
+      position: relative;
+      width: 100%;
     }
     
     .number-box {
@@ -112,10 +149,72 @@
       transform-style: preserve-3d;
     }
     
+    .card {
+      width: 60px;
+      height: 90px;
+      position: relative;
+      background-color: white;
+      color: black;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 5px;
+      box-sizing: border-box;
+      transform-style: preserve-3d;
+      transition: transform 0.8s ease, box-shadow 0.5s ease;
+    }
+    
+    .card-top {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      line-height: 1;
+    }
+    
+    .card-bottom {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      transform: rotate(180deg);
+      line-height: 1;
+    }
+    
+    .card-value {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    .card-suit {
+      font-size: 18px;
+    }
+    
+    .heart, .diamond {
+      color: #e91e63;
+    }
+    
+    .spade, .club {
+      color: #000000;
+    }
+    
+    .card-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 24px;
+    }
+    
     .number-box.current-i {
       background-color: #3949ab;
       box-shadow: 0 0 20px rgba(92, 107, 192, 0.6);
       z-index: 10;
+    }
+    
+    .card.current-i {
+      z-index: 10;
+      box-shadow: 0 0 20px rgba(92, 107, 192, 0.8);
     }
     
     .number-box.current-j {
@@ -124,15 +223,29 @@
       z-index: 10;
     }
     
+    .card.current-j {
+      z-index: 10;
+      box-shadow: 0 0 20px rgba(255, 167, 38, 0.8);
+    }
+    
     .number-box.comparing {
       background-color: #66bb6a;
       box-shadow: 0 0 20px rgba(102, 187, 106, 0.6);
       z-index: 5;
     }
     
+    .card.comparing {
+      z-index: 5;
+      box-shadow: 0 0 20px rgba(102, 187, 106, 0.8);
+    }
+    
     .number-box.sorted {
-      background-color: #3949ab;
+      background-color: #9c27b0;
       box-shadow: 0 0 20px rgba(171, 71, 188, 0.5);
+    }
+    
+    .card.sorted {
+      box-shadow: 0 0 20px rgba(171, 71, 188, 0.7);
     }
     
     .pointer-label {
@@ -198,11 +311,11 @@
     }
     
     .sorted-color {
-      background-color: #ab47bc;
+      background-color: #9c27b0;
     }
     
-    /* 3D effects for box flipping */
-    .number-box.flip {
+    /* 3D effects for box and card flipping */
+    .number-box.flip, .card.flip {
       animation: flip 1.2s ease forwards;
     }
     
@@ -212,8 +325,8 @@
       100% { transform: rotateY(360deg); }
     }
     
-    /* 3D effects for box movement */
-    .clone-box {
+    /* 3D effects for box and card movement */
+    .clone-box, .clone-card {
       position: absolute;
       z-index: 100;
       transition: all 1.2s cubic-bezier(0.25, 0.1, 0.25, 1.4);
@@ -321,22 +434,32 @@
     .tab-content.active {
       display: block;
     }
+    
+    .hidden {
+      display: none !important;
+    }
   </style>
 </head>
 <body>
   <h1>Insertion Sort Visualization</h1>
   
+  <!-- Visualization Toggle -->
+  <div class="visualization-toggle">
+    <button class="toggle-btn active" id="array-toggle">Array View</button>
+    <button class="toggle-btn" id="card-toggle">Card View</button>
+  </div>
+  
   <div class="custom-input-container">
     <div class="tab-container">
-      <div class="tab active" data-tab="random">Random Array</div>
-      <div class="tab" data-tab="custom">Custom Array</div>
+      <div class="tab active" data-tab="random">Random Values</div>
+      <div class="tab" data-tab="custom">Custom Values</div>
     </div>
     
     <div class="tab-content active" id="random-tab">
       <div class="input-row">
         <label for="array-size">Size:</label>
-        <input type="text" id="array-size" value="10" placeholder="Enter array size (3-15)">
-        <button id="generate">Generate Random Array</button>
+        <input type="text" id="array-size" value="10" placeholder="Enter size (3-13)">
+        <button id="generate">Generate Random Values</button>
       </div>
       <div id="size-error" class="input-error"></div>
     </div>
@@ -345,7 +468,7 @@
       <div class="input-row">
         <label for="custom-array">Values:</label>
         <input type="text" id="custom-array" placeholder="Enter numbers separated by commas (e.g., 45, 23, 11, 89, 77)">
-        <button id="use-custom">Create Array</button>
+        <button id="use-custom">Create Values</button>
       </div>
       <div id="custom-error" class="input-error"></div>
     </div>
@@ -362,7 +485,11 @@
   </div>
   
   <div class="visualization">
+    <!-- Array Visualization -->
     <div class="array-container" id="array-container"></div>
+    
+    <!-- Card Visualization (initially hidden) -->
+    <div class="cards-container hidden" id="cards-container"></div>
   </div>
   
   <div class="pointer-info">
@@ -385,18 +512,23 @@
   </div>
   
   <div class="status" id="status">
-    Generate a new array or enter a custom array to begin
+    Generate new values or enter custom values to begin
   </div>
   
   <script>
-    let array = [];
+    // State variables
+    let arrayValues = [];
+    let cardValues = [];
     let arraySize = 10;  // Default size
     let animationQueue = [];
     let animationInterval;
     let isPaused = false;
     let isSorting = false;
+    let currentView = 'array'; // 'array' or 'card'
     
+    // DOM elements
     const arrayContainer = document.getElementById('array-container');
+    const cardsContainer = document.getElementById('cards-container');
     const statusElement = document.getElementById('status');
     const generateButton = document.getElementById('generate');
     const useCustomButton = document.getElementById('use-custom');
@@ -408,6 +540,17 @@
     const customArrayInput = document.getElementById('custom-array');
     const sizeError = document.getElementById('size-error');
     const customError = document.getElementById('custom-error');
+    const arrayToggle = document.getElementById('array-toggle');
+    const cardToggle = document.getElementById('card-toggle');
+    
+    // Card suits and values
+    const suits = ['♥', '♦', '♠', '♣'];
+    const suitClasses = {
+      '♥': 'heart',
+      '♦': 'diamond',
+      '♠': 'spade',
+      '♣': 'club'
+    };
     
     // Tab functionality
     const tabs = document.querySelectorAll('.tab');
@@ -425,36 +568,128 @@
       });
     });
     
-    // Generate random array
-    function generateArray() {
+    // Toggle between array and card view
+    arrayToggle.addEventListener('click', function() {
+      if (currentView !== 'array') {
+        currentView = 'array';
+        arrayToggle.classList.add('active');
+        cardToggle.classList.remove('active');
+        arrayContainer.classList.remove('hidden');
+        cardsContainer.classList.add('hidden');
+        
+        document.querySelector('.tab[data-tab="custom"]').classList.remove('hidden');
+        // Update status message for current view
+        updateStatusMessage();
+      }
+    });
+    
+    cardToggle.addEventListener('click', function() {
+      if (currentView !== 'card') {
+        currentView = 'card';
+        cardToggle.classList.add('active');
+        arrayToggle.classList.remove('active');
+        cardsContainer.classList.remove('hidden');
+        arrayContainer.classList.add('hidden');
+        
+        // Hide Custom Values tab and content
+    document.querySelector('.tab[data-tab="custom"]').classList.add('hidden');
+    document.getElementById('custom-tab').classList.add('hidden');
+
+    // Switch to Random tab if Custom was active
+    const activeTab = document.querySelector('.tab.active');
+    if (activeTab?.dataset.tab === 'custom') {
+      document.querySelector('.tab[data-tab="custom"]').classList.remove('active');
+      document.getElementById('custom-tab').classList.remove('active');
+
+      document.querySelector('.tab[data-tab="random"]').classList.add('active');
+      document.getElementById('random-tab').classList.add('active');
+    }
+        // Update status message for current view
+        updateStatusMessage();
+      }
+    });
+    
+    // Update status message based on current view
+    function updateStatusMessage() {
+      if (!arrayValues.length && !cardValues.length) {
+        statusElement.textContent = "Generate new values or enter custom values to begin";
+      } else if (!isSorting) {
+        statusElement.textContent = `${arraySize} ${currentView === 'array' ? 'array elements' : 'cards'} generated. Click 'Start Sorting' to begin.`;
+      }
+    }
+    
+    // Generate random values for both array and cards
+    function generateValues() {
       // Validate array size
       const size = parseInt(arraySizeInput.value);
       
-      if (isNaN(size) || size < 3 || size > 15) {
-        sizeError.textContent = 'Please enter a size between 3 and 15';
+      if (isNaN(size) || size < 3 || size > 13) {
+        sizeError.textContent = 'Please enter a size between 3 and 13';
         return;
       }
       
       sizeError.textContent = '';
       arraySize = size;
-      array = [];
       
+      // Generate random array values
+      arrayValues = [];
       for (let i = 0; i < arraySize; i++) {
-        array.push(Math.floor(Math.random() * 90) + 10); // Values between 10 and 99
+        arrayValues.push(Math.floor(Math.random() * 90) + 10); // Values between 10 and 99
       }
       
+      // Generate random card values (completely different from array values)
+      generateRandomCards(arraySize);
+      
       renderArray();
-      statusElement.textContent = `Random array generated with ${arraySize} elements. Click 'Start Sorting' to begin.`;
+      renderCards();
+      
+      statusElement.textContent = `Random ${currentView === 'array' ? 'array elements' : 'cards'} generated with ${arraySize} elements. Click 'Start Sorting' to begin.`;
       startButton.disabled = false;
       resetButton.disabled = false;
     }
     
-    // Create array from custom input
-    function createCustomArray() {
+    // Generate random cards
+    function generateRandomCards(size) {
+      cardValues = [];
+      let used = new Set();
+      
+      // Create unique cards (values 1-13)
+      for (let i = 0; i < size; i++) {
+        let cardValue;
+        do {
+          cardValue = Math.floor(Math.random() * 13) + 1; // Card values 1-13 (Ace to King)
+        } while (used.has(cardValue));
+        
+        used.add(cardValue);
+        
+        // Random suit
+        const suit = suits[Math.floor(Math.random() * suits.length)];
+        
+        cardValues.push({
+          value: cardValue,
+          suit: suit,
+          displayValue: getCardDisplayValue(cardValue)
+        });
+      }
+    }
+    
+    // Convert card numeric value to display value (A, J, Q, K)
+    function getCardDisplayValue(value) {
+      switch(value) {
+        case 1: return 'A';
+        case 11: return 'J';
+        case 12: return 'Q';
+        case 13: return 'K';
+        default: return value.toString();
+      }
+    }
+    
+    // Create custom values from input
+    function createCustomValues() {
       const input = customArrayInput.value.trim();
       
       if (!input) {
-        customError.textContent = 'Please enter values for the array';
+        customError.textContent = 'Please enter values';
         return;
       }
       
@@ -471,17 +706,22 @@
       }
       
       // Check array size
-      if (values.length < 3 || values.length > 15) {
-        customError.textContent = 'Please enter between 3 and 15 numbers';
+      if (values.length < 3 || values.length > 13) {
+        customError.textContent = 'Please enter between 3 and 13 numbers';
         return;
       }
       
       customError.textContent = '';
-      array = values;
+      arrayValues = values;
       arraySize = values.length;
       
+      // Generate random cards with the same size (independent of array values)
+      generateRandomCards(arraySize);
+      
       renderArray();
-      statusElement.textContent = `Custom array created with ${arraySize} elements. Click 'Start Sorting' to begin.`;
+      renderCards();
+      
+      statusElement.textContent = `Custom ${currentView === 'array' ? 'array elements' : 'cards'} created with ${arraySize} elements. Click 'Start Sorting' to begin.`;
       startButton.disabled = false;
       resetButton.disabled = false;
     }
@@ -490,7 +730,7 @@
     function renderArray() {
       arrayContainer.innerHTML = '';
       
-      array.forEach((value, index) => {
+      arrayValues.forEach((value, index) => {
         const box = document.createElement('div');
         box.className = 'number-box';
         box.textContent = value;
@@ -501,10 +741,68 @@
       });
     }
     
+    // Render cards
+    function renderCards() {
+      cardsContainer.innerHTML = '';
+      
+      cardValues.forEach((cardObj, index) => {
+        const card = document.createElement('div');
+        card.className = `card ${suitClasses[cardObj.suit]}`;
+        card.dataset.value = cardObj.value;
+        card.dataset.index = index;
+        
+        // Create card top section
+        const cardTop = document.createElement('div');
+        cardTop.className = 'card-top';
+        
+        const topValue = document.createElement('div');
+        topValue.className = `card-value ${suitClasses[cardObj.suit]}`;
+        topValue.textContent = cardObj.displayValue;
+        
+        const topSuit = document.createElement('div');
+        topSuit.className = `card-suit ${suitClasses[cardObj.suit]}`;
+        topSuit.textContent = cardObj.suit;
+        
+        cardTop.appendChild(topValue);
+        cardTop.appendChild(topSuit);
+        
+        // Create card center
+        const cardCenter = document.createElement('div');
+        cardCenter.className = `card-center ${suitClasses[cardObj.suit]}`;
+        cardCenter.textContent = cardObj.suit;
+        
+        // Create card bottom section
+        const cardBottom = document.createElement('div');
+        cardBottom.className = 'card-bottom';
+        
+        const bottomValue = document.createElement('div');
+        bottomValue.className = `card-value ${suitClasses[cardObj.suit]}`;
+        bottomValue.textContent = cardObj.displayValue;
+        
+        const bottomSuit = document.createElement('div');
+        bottomSuit.className = `card-suit ${suitClasses[cardObj.suit]}`;
+        bottomSuit.textContent = cardObj.suit;
+        
+        cardBottom.appendChild(bottomValue);
+        cardBottom.appendChild(bottomSuit);
+        
+        // Append all parts to the card
+        card.appendChild(cardTop);
+        card.appendChild(cardCenter);
+        card.appendChild(cardBottom);
+        
+        cardsContainer.appendChild(card);
+      });
+    }
+    
     // Insertion sort algorithm with animation steps
     function insertionSort() {
+      // Clear previous animations
       animationQueue = [];
-      const arrayCopy = [...array];
+      
+      // Create copies to work with
+      const arrayValuesCopy = [...arrayValues];
+      const cardValuesCopy = JSON.parse(JSON.stringify(cardValues));
       
       // Add initial state
       animationQueue.push({
@@ -514,37 +812,78 @@
         message: 'Starting insertion sort. First element (index 0) is already considered sorted.'
       });
       
-      for (let i = 1; i < arrayCopy.length; i++) {
+      // Perform insertion sort
+      for (let i = 1; i < arraySize; i++) {
         // Highlight current element to insert
+        let currentMessage = '';
+        
+        if (currentView === 'array') {
+          currentMessage = `Outer loop: i = ${i}. Consider element ${arrayValuesCopy[i]} for insertion into the sorted portion.`;
+        } else {
+          currentMessage = `Outer loop: i = ${i}. Consider the ${cardValuesCopy[i].displayValue} of ${cardValuesCopy[i].suit} for insertion into the sorted portion.`;
+        }
+        
         animationQueue.push({
           type: 'highlight',
           i: i,
           j: null,
-          message: `Outer loop: i = ${i}. Consider element ${arrayCopy[i]} for insertion into the sorted portion.`
+          message: currentMessage
         });
         
         let j = i;
         
         // Comparing and swapping phase
-        while (j > 0 && arrayCopy[j - 1] > arrayCopy[j]) {
+        while (j > 0) {
+          let shouldSwap = false;
+          
+          if (currentView === 'array') {
+            shouldSwap = arrayValuesCopy[j - 1] > arrayValuesCopy[j];
+          } else {
+            shouldSwap = cardValuesCopy[j - 1].value > cardValuesCopy[j].value;
+          }
+          
+          if (!shouldSwap) break;
+          
           // Highlight comparison
+          let compareMessage = '';
+          
+          if (currentView === 'array') {
+            compareMessage = `Comparing: array[${j-1}] = ${arrayValuesCopy[j-1]} > array[${j}] = ${arrayValuesCopy[j]}? Yes, need to swap.`;
+          } else {
+            compareMessage = `Comparing: cards[${j-1}] = ${cardValuesCopy[j-1].displayValue}${cardValuesCopy[j-1].suit} > cards[${j}] = ${cardValuesCopy[j].displayValue}${cardValuesCopy[j].suit}? Yes, need to swap.`;
+          }
+          
           animationQueue.push({
             type: 'compare',
             i: i,
             j: j,
             compare: j - 1,
-            message: `Comparing: array[${j-1}] = ${arrayCopy[j-1]} > array[${j}] = ${arrayCopy[j]}? Yes, need to swap.`
+            message: compareMessage
           });
           
-          // Swap animation
-          [arrayCopy[j], arrayCopy[j - 1]] = [arrayCopy[j - 1], arrayCopy[j]];
+          // Swap values in array
+          [arrayValuesCopy[j], arrayValuesCopy[j - 1]] = [arrayValuesCopy[j - 1], arrayValuesCopy[j]];
+          
+          // Swap values in card array
+          [cardValuesCopy[j], cardValuesCopy[j - 1]] = [cardValuesCopy[j - 1], cardValuesCopy[j]];
+          
+          // Add swap animation
+          let swapMessage = '';
+          
+          if (currentView === 'array') {
+            swapMessage = `Swap: Moving ${arrayValuesCopy[j-1]} to position ${j-1} and ${arrayValuesCopy[j]} to position ${j}.`;
+          } else {
+            swapMessage = `Swap: Moving ${cardValuesCopy[j-1].displayValue}${cardValuesCopy[j-1].suit} to position ${j-1} and ${cardValuesCopy[j].displayValue}${cardValuesCopy[j].suit} to position ${j}.`;
+          }
+          
           animationQueue.push({
             type: 'swap',
             indices: [j, j - 1],
-            array: [...arrayCopy],
+            arrayValues: [...arrayValuesCopy],
+            cardValues: JSON.parse(JSON.stringify(cardValuesCopy)),
             i: i,
             j: j - 1,
-            message: `Swap: Moving ${arrayCopy[j-1]} to position ${j-1} and ${arrayCopy[j]} to position ${j}.`
+            message: swapMessage
           });
           
           j--;
@@ -552,14 +891,28 @@
         
         // If no swap occurred or we've reached the beginning
         if (j === i || j === 0) {
+          let compareMessage = '';
+          
+          if (j === 0) {
+            if (currentView === 'array') {
+              compareMessage = `Reached the beginning of the array, element ${arrayValuesCopy[j]} stays at position ${j}.`;
+            } else {
+              compareMessage = `Reached the beginning of the array, card ${cardValuesCopy[j].displayValue}${cardValuesCopy[j].suit} stays at position ${j}.`;
+            }
+          } else {
+            if (currentView === 'array') {
+              compareMessage = `Comparing: array[${j-1}] = ${arrayValuesCopy[j-1]} > array[${j}] = ${arrayValuesCopy[j]}? No, no more swaps needed.`;
+            } else {
+              compareMessage = `Comparing: cards[${j-1}] = ${cardValuesCopy[j-1].displayValue}${cardValuesCopy[j-1].suit} > cards[${j}] = ${cardValuesCopy[j].displayValue}${cardValuesCopy[j].suit}? No, no more swaps needed.`;
+            }
+          }
+          
           animationQueue.push({
             type: 'compare',
             i: i,
             j: j,
             compare: j - 1 >= 0 ? j - 1 : null,
-            message: j === 0 ? 
-              `Reached the beginning of the array, element ${arrayCopy[j]} stays at position ${j}.` :
-              `Comparing: array[${j-1}] = ${arrayCopy[j-1]} > array[${j}] = ${arrayCopy[j]}? No, no more swaps needed.`
+            message: compareMessage
           });
         }
         
@@ -576,7 +929,7 @@
       // Final state
       animationQueue.push({
         type: 'complete',
-        message: 'Sorting complete! The array is now fully sorted.'
+        message: 'Sorting complete! All elements are now fully sorted.'
       });
     }
     
@@ -588,78 +941,145 @@
       
       const animation = animationQueue.shift();
       const boxes = arrayContainer.querySelectorAll('.number-box');
+      const cards = cardsContainer.querySelectorAll('.card');
       
-      // Reset all box states
-      boxes.forEach(box => {
-        box.className = 'number-box';
-        box.querySelector('.pointer-label')?.remove();
-      });
+      // Reset all element states
+      if (currentView === 'array') {
+        boxes.forEach(box => {
+          box.className = 'number-box';
+          box.querySelector('.pointer-label')?.remove();
+        });
+      } else {
+        cards.forEach(card => {
+          // Preserve the suit class
+          const suitClass = Array.from(card.classList).find(c => 
+            c === 'heart' || c === 'diamond' || c === 'spade' || c === 'club'
+          );
+          card.className = `card ${suitClass}`;
+          card.querySelector('.pointer-label')?.remove();
+        });
+      }
       
       statusElement.textContent = animation.message;
       
       switch (animation.type) {
         case 'highlight':
           if (animation.i !== null) {
-            boxes[animation.i].classList.add('current-i');
-            addPointerLabel(boxes[animation.i], 'i');
+            if (currentView === 'array') {
+              boxes[animation.i]?.classList.add('current-i');
+              addPointerLabel(boxes[animation.i], 'i');
+            } else {
+              cards[animation.i]?.classList.add('current-i');
+              addPointerLabel(cards[animation.i], 'i');
+            }
           }
           break;
           
         case 'compare':
           if (animation.i !== null) {
-            boxes[animation.i].classList.add('current-i');
-            addPointerLabel(boxes[animation.i], 'i');
+            if (currentView === 'array') {
+              boxes[animation.i]?.classList.add('current-i');
+              addPointerLabel(boxes[animation.i], 'i');
+            } else {
+              cards[animation.i]?.classList.add('current-i');
+              addPointerLabel(cards[animation.i], 'i');
+            }
           }
+          
           if (animation.j !== null) {
-            boxes[animation.j].classList.add('current-j');
-            addPointerLabel(boxes[animation.j], 'j');
+            if (currentView === 'array') {
+              boxes[animation.j]?.classList.add('current-j');
+              addPointerLabel(boxes[animation.j], 'j');
+            } else {
+              cards[animation.j]?.classList.add('current-j');
+              addPointerLabel(cards[animation.j], 'j');
+            }
           }
+          
           if (animation.compare !== null && animation.compare >= 0) {
-            boxes[animation.compare].classList.add('comparing');
+            if (currentView === 'array') {
+              boxes[animation.compare]?.classList.add('comparing');
+            } else {
+              cards[animation.compare]?.classList.add('comparing');
+            }
           }
           break;
           
         case 'swap':
-          // Update the internal array values
-          updateArrayValues(animation.array);
+          // Update the values
+          if (currentView === 'array') {
+            updateArrayValues(animation.arrayValues);
+          } else {
+            updateCardValues(animation.cardValues);
+          }
           
           // Apply swap animation
           const [idx1, idx2] = animation.indices;
-          animateSwap(boxes[idx1], boxes[idx2]);
           
-          // Apply highlighting
-          if (animation.i !== null) {
-            boxes[animation.i].classList.add('current-i');
-            addPointerLabel(boxes[animation.i], 'i');
-          }
-          if (animation.j !== null) {
-            boxes[animation.j].classList.add('current-j');
-            addPointerLabel(boxes[animation.j], 'j');
+          if (currentView === 'array') {
+            animateSwap(boxes[idx1], boxes[idx2], 'box');
+            
+            if (animation.i !== null) {
+              boxes[animation.i]?.classList.add('current-i');
+              addPointerLabel(boxes[animation.i], 'i');
+            }
+            
+            if (animation.j !== null) {
+              boxes[animation.j]?.classList.add('current-j');
+              addPointerLabel(boxes[animation.j], 'j');
+            }
+          } else {
+            animateSwap(cards[idx1], cards[idx2], 'card');
+            
+            if (animation.i !== null) {
+              cards[animation.i]?.classList.add('current-i');
+              addPointerLabel(cards[animation.i], 'i');
+            }
+            
+            if (animation.j !== null) {
+              cards[animation.j]?.classList.add('current-j');
+              addPointerLabel(cards[animation.j], 'j');
+            }
           }
           break;
           
         case 'sorted':
           for (let i = 0; i <= animation.sortedUpTo; i++) {
-            boxes[i].classList.add('sorted');
+            if (currentView === 'array') {
+              boxes[i]?.classList.add('sorted');
+            } else {
+              cards[i]?.classList.add('sorted');
+            }
           }
+          
           if (animation.i !== null) {
-            boxes[animation.i].classList.add('current-i');
-            addPointerLabel(boxes[animation.i], 'i');
+            if (currentView === 'array') {
+              boxes[animation.i]?.classList.add('current-i');
+              addPointerLabel(boxes[animation.i], 'i');
+            } else {
+              cards[animation.i]?.classList.add('current-i');
+              addPointerLabel(cards[animation.i], 'i');
+            }
           }
           break;
           
         case 'complete':
-          boxes.forEach(box => box.classList.add('sorted'));
+          if (currentView === 'array') {
+            boxes.forEach(box => box.classList.add('sorted'));
+          } else {
+            cards.forEach(card => card.classList.add('sorted'));
+          }
+          
           isSorting = false;
           startButton.disabled = true;
           pauseButton.disabled = true;
-          clearInterval(animationInterval);
+          clearTimeout(animationInterval);
           break;
       }
       
-      // Schedule next animation with much slower speed scale
+      // Schedule next animation with speed control
       if (animationQueue.length > 0 && !isPaused) {
-        // Very slow speed options: 4000ms, 3000ms, 2000ms
+        // Speed options: 4000ms, 3000ms, 2000ms (slower for better visualization)
         const delay = 5000 - speedControl.value * 1000;
         animationInterval = setTimeout(processAnimationQueue, delay);
       } else if (animationQueue.length === 0) {
@@ -668,12 +1088,14 @@
       }
     }
     
-    // Add pointer label to a box
-    function addPointerLabel(box, label) {
+    // Add pointer label to an element
+    function addPointerLabel(element, label) {
+      if (!element) return;
+      
       const pointerLabel = document.createElement('div');
       pointerLabel.className = 'pointer-label';
       pointerLabel.textContent = label;
-      box.appendChild(pointerLabel);
+      element.appendChild(pointerLabel);
     }
     
     // Update array values in the visualization
@@ -681,43 +1103,103 @@
       const boxes = arrayContainer.querySelectorAll('.number-box');
       
       boxes.forEach((box, index) => {
-        box.textContent = newArray[index];
-        box.dataset.value = newArray[index];
+        if (newArray[index] !== undefined) {
+          box.textContent = newArray[index];
+          box.dataset.value = newArray[index];
+        }
+      });
+    }
+    
+    // Update card values in the visualization
+    function updateCardValues(newCards) {
+      const cards = cardsContainer.querySelectorAll('.card');
+      
+      cards.forEach((card, index) => {
+        if (!newCards[index]) return;
+        
+        const cardObj = newCards[index];
+        card.dataset.value = cardObj.value;
+        
+        // Update suit class
+        const suitClass = suitClasses[cardObj.suit];
+        
+        // First remove all suit classes
+        card.classList.remove('heart', 'diamond', 'spade', 'club');
+        // Then add the correct one
+        card.classList.add(suitClass);
+        
+        // Update all display elements
+        const topValue = card.querySelector('.card-top .card-value');
+        const topSuit = card.querySelector('.card-top .card-suit');
+        const cardCenter = card.querySelector('.card-center');
+        const bottomValue = card.querySelector('.card-bottom .card-value');
+        const bottomSuit = card.querySelector('.card-bottom .card-suit');
+        
+        if (topValue) {
+          topValue.textContent = cardObj.displayValue;
+          topValue.className = `card-value ${suitClass}`;
+        }
+        
+        if (topSuit) {
+          topSuit.textContent = cardObj.suit;
+          topSuit.className = `card-suit ${suitClass}`;
+        }
+        
+        if (cardCenter) {
+          cardCenter.textContent = cardObj.suit;
+          cardCenter.className = `card-center ${suitClass}`;
+        }
+        
+        if (bottomValue) {
+          bottomValue.textContent = cardObj.displayValue;
+          bottomValue.className = `card-value ${suitClass}`;
+        }
+        
+        if (bottomSuit) {
+          bottomSuit.textContent = cardObj.suit;
+          bottomSuit.className = `card-suit ${suitClass}`;
+        }
       });
     }
     
     // Animate the swap with 3D effect
-    function animateSwap(box1, box2) {
+    function animateSwap(element1, element2, type) {
+      if (!element1 || !element2) return;
+      
       // Get current positions
-      const rect1 = box1.getBoundingClientRect();
-      const rect2 = box2.getBoundingClientRect();
+      const rect1 = element1.getBoundingClientRect();
+      const rect2 = element2.getBoundingClientRect();
       
       // Create clones for animation
-      const clone1 = box1.cloneNode(true);
-      const clone2 = box2.cloneNode(true);
+      const clone1 = element1.cloneNode(true);
+      const clone2 = element2.cloneNode(true);
       
       // Add clone class for styling
-      clone1.classList.add('clone-box');
-      clone2.classList.add('clone-box');
+      clone1.classList.add(type === 'box' ? 'clone-box' : 'clone-card');
+      clone2.classList.add(type === 'box' ? 'clone-box' : 'clone-card');
       
       // Position clones absolutely at original positions
+      clone1.style.position = 'fixed';
       clone1.style.left = `${rect1.left}px`;
       clone1.style.top = `${rect1.top}px`;
       clone1.style.width = `${rect1.width}px`;
       clone1.style.height = `${rect1.height}px`;
+      clone1.style.zIndex = '1000';
       
+      clone2.style.position = 'fixed';
       clone2.style.left = `${rect2.left}px`;
       clone2.style.top = `${rect2.top}px`;
       clone2.style.width = `${rect2.width}px`;
       clone2.style.height = `${rect2.height}px`;
+      clone2.style.zIndex = '1000';
       
       // Add clones to body
       document.body.appendChild(clone1);
       document.body.appendChild(clone2);
       
-      // Hide original boxes
-      box1.style.opacity = '0';
-      box2.style.opacity = '0';
+      // Hide original elements
+      element1.style.opacity = '0';
+      element2.style.opacity = '0';
       
       // Animate clones
       setTimeout(() => {
@@ -728,23 +1210,22 @@
         // Move to new positions
         clone1.style.left = `${rect2.left}px`;
         clone2.style.left = `${rect1.left}px`;
-      }, 100);
+      }, 50);
       
-      // Remove clones and show original boxes after animation (longer duration)
+      // Remove clones and show original elements after animation
       setTimeout(() => {
         clone1.remove();
         clone2.remove();
-        box1.style.opacity = '1';
-        box2.style.opacity = '1';
-      }, 1300);
+        element1.style.opacity = '1';
+        element2.style.opacity = '1';
+      }, 1200);
     }
     
     // Event listeners
-    generateButton.addEventListener('click', generateArray);
+    generateButton.addEventListener('click', generateValues);
+    useCustomButton.addEventListener('click', createCustomValues);
     
-    useCustomButton.addEventListener('click', createCustomArray);
-    
-    startButton.addEventListener('click', () => {
+    startButton.addEventListener('click', function() {
       if (isSorting) return;
       
       isSorting = true;
@@ -757,7 +1238,7 @@
       processAnimationQueue();
     });
     
-    pauseButton.addEventListener('click', () => {
+    pauseButton.addEventListener('click', function() {
       isPaused = !isPaused;
       pauseButton.textContent = isPaused ? 'Resume' : 'Pause';
       
@@ -768,7 +1249,7 @@
       }
     });
     
-    resetButton.addEventListener('click', () => {
+    resetButton.addEventListener('click', function() {
       clearTimeout(animationInterval);
       isPaused = false;
       isSorting = false;
@@ -777,23 +1258,28 @@
       pauseButton.disabled = true;
       pauseButton.textContent = 'Pause';
       
-      // Reset visualization
-      renderArray();
-      statusElement.textContent = 'Sorting reset. Click "Start Sorting" to begin again.';
+      // Reset visualization based on current view
+      if (currentView === 'array') {
+        renderArray();
+      } else {
+        renderCards();
+      }
+      
+      statusElement.textContent = `Sorting reset. Click "Start Sorting" to begin again.`;
     });
     
     // Input validation
-    arraySizeInput.addEventListener('input', () => {
+    arraySizeInput.addEventListener('input', function() {
       const size = parseInt(arraySizeInput.value);
-      if (isNaN(size) || size < 3 || size > 15) {
-        sizeError.textContent = 'Please enter a size between 3 and 15';
+      if (isNaN(size) || size < 3 || size > 13) {
+        sizeError.textContent = 'Please enter a size between 3 and 13';
       } else {
         sizeError.textContent = '';
       }
     });
     
-    // Initialize
-    generateArray();
+    // Initialize with random values
+    generateValues();
   </script>
   
   <div class="about-section">
@@ -821,5 +1307,3 @@
     <h3>Stability:</h3>
     <p>Insertion Sort is a <strong>stable</strong> sorting algorithm – it preserves the relative order of equal elements.</p>
   </div>
-</body>
-</html>
